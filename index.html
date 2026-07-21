@@ -14,7 +14,6 @@
     --ink-3: #9096a0;
     --up: #d13c46;      /* 상승 (한국 관례: 빨강) */
     --down: #2a6bd4;    /* 하락 (한국 관례: 파랑) */
-    --accent: #1a1d21;
     --chip: #f1f2f4;
     --radius: 14px;
   }
@@ -30,7 +29,6 @@
   }
   a { color: inherit; }
 
-  /* ── 헤더 ── */
   header {
     display: flex; align-items: baseline; justify-content: space-between;
     flex-wrap: wrap; gap: 8px; margin-bottom: 6px;
@@ -46,13 +44,12 @@
   }
   .statusline .dot { width: 7px; height: 7px; border-radius: 50%; background: #35b26a; display: inline-block; }
   .statusline .dot.err { background: #d13c46; }
-  button.refresh {
+  button.pill {
     border: 1px solid var(--border); background: var(--card); color: var(--ink-2);
     font: inherit; font-size: 12.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
   }
-  button.refresh:hover { border-color: var(--ink-3); color: var(--ink); }
+  button.pill:hover { border-color: var(--ink-3); color: var(--ink); }
 
-  /* ── 그리드 ── */
   .grid {
     display: grid; gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -63,14 +60,14 @@
     border-radius: var(--radius); padding: 20px 22px;
     display: flex; flex-direction: column; min-height: 168px;
   }
+  section.card.wide { grid-column: 1 / -1; }
   .card h2 {
     font-size: 13px; font-weight: 700; color: var(--ink-2);
     letter-spacing: 0.02em; margin-bottom: 14px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
   }
-  .card h2 .src { font-weight: 500; font-size: 11.5px; color: var(--ink-3); }
+  .card h2 .src { font-weight: 500; font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
 
-  /* ── 날씨 카드 ── */
   .weather-now { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
   .weather-now .icon { font-size: 44px; line-height: 1; }
   .weather-now .temp { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; }
@@ -84,7 +81,6 @@
   .wday .range { font-weight: 700; font-variant-numeric: tabular-nums; }
   .wday .rain { color: var(--down); font-size: 12.5px; }
 
-  /* ── 주식 카드 ── */
   .stock-head { display: flex; justify-content: space-between; align-items: baseline; }
   .stock-name { font-size: 16px; font-weight: 700; }
   .stock-sym { font-size: 11.5px; color: var(--ink-3); font-weight: 500; margin-left: 6px; }
@@ -101,14 +97,40 @@
   .spark svg { width: 100%; height: 44px; display: block; }
   .spark .cap { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
 
-  /* ── 캘린더 자리 ── */
-  .placeholder {
-    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
-    color: var(--ink-3); font-size: 13.5px; margin: auto 0;
+  .mail-list { list-style: none; display: flex; flex-direction: column; }
+  .mail-item {
+    padding: 10px 2px; border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 10px;
   }
-  .placeholder .big { font-size: 15px; color: var(--ink-2); font-weight: 600; }
+  .mail-item:first-child { border-top: none; padding-top: 2px; }
+  .mail-subject { font-size: 14px; font-weight: 700; text-decoration: none; }
+  .mail-subject:hover { text-decoration: underline; }
+  .mail-subject .badge {
+    display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--up);
+    border: 1px solid var(--up); border-radius: 5px; padding: 0 5px; margin-right: 6px;
+    vertical-align: 1px;
+  }
+  .mail-from { font-size: 12px; color: var(--ink-3); white-space: nowrap; text-align: right; }
+  .mail-snippet {
+    grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
+  }
+  .mail-more { margin-top: 10px; align-self: flex-start; }
 
-  .loading { color: var(--ink-3); font-size: 13.5px; margin: auto 0; }
+  .cal-list { list-style: none; display: flex; flex-direction: column; }
+  .cal-item {
+    display: flex; gap: 12px; align-items: baseline;
+    padding: 9px 2px; border-top: 1px solid var(--border);
+  }
+  .cal-item:first-child { border-top: none; padding-top: 2px; }
+  .cal-time {
+    font-size: 12.5px; font-weight: 700; color: var(--ink-2);
+    font-variant-numeric: tabular-nums; min-width: 88px;
+  }
+  .cal-title { font-size: 14px; font-weight: 600; }
+  .cal-loc { font-size: 12px; color: var(--ink-3); margin-left: 8px; }
+
+  .placeholder, .loading { color: var(--ink-3); font-size: 13.5px; margin: auto 0; line-height: 1.6; }
+  .placeholder .big { font-size: 15px; color: var(--ink-2); font-weight: 600; display: block; margin-bottom: 6px; }
   .errmsg { color: var(--up); font-size: 13px; margin: auto 0; line-height: 1.5; }
 
   footer { margin-top: 26px; font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
@@ -126,44 +148,46 @@
 <div class="statusline">
   <span class="dot" id="net-dot"></span>
   <span id="net-status">데이터 불러오는 중…</span>
-  <button class="refresh" id="btn-refresh">새로고침</button>
+  <button class="pill" id="btn-refresh">새로고침</button>
 </div>
 
 <div class="grid">
 
-  <!-- 날씨 -->
   <section class="card" id="card-weather">
     <h2>목동 날씨 <span class="src">Open-Meteo</span></h2>
     <div class="loading">불러오는 중…</div>
   </section>
 
-  <!-- 주식 3종목: JS가 채움 -->
   <section class="card stock" data-symbol="005930.KS"></section>
   <section class="card stock" data-symbol="PLTR"></section>
   <section class="card stock" data-symbol="GOOG"></section>
 
-  <!-- 캘린더 (연동 예정) -->
-  <section class="card">
+  <section class="card" id="card-calendar">
     <h2>오늘의 일정 <span class="src">Google Calendar</span></h2>
-    <div class="placeholder">
-      <span class="big">🗓️ 연동 예정</span>
-      <span>다음 단계에서 Google Calendar API(OAuth)를 붙이면<br>이 자리에 오늘 일정이 자동으로 표시됩니다.</span>
-    </div>
+    <div class="loading">…</div>
+  </section>
+
+  <section class="card wide" id="card-mail">
+    <h2>회신이 필요한 메일 <span class="src">Gmail · AI 선별</span></h2>
+    <div class="loading">…</div>
   </section>
 
 </div>
 
 <footer>
   주가·환율은 15~20분 지연될 수 있으며 투자 판단의 근거가 아닌 참고용입니다.
-  · 시세: Yahoo Finance · 날씨: Open-Meteo · 상승 <span style="color:var(--up)">▲빨강</span> / 하락 <span style="color:var(--down)">▼파랑</span> (국내 관례)
+  · 시세: Yahoo Finance · 날씨: Open-Meteo
+  · 메일·일정 브리핑: 매일 아침 AI 비서가 선별·요약 후 암호화하여 게시 (전용 링크로만 열람 가능)
+  · 상승 <span style="color:var(--up)">▲빨강</span> / 하락 <span style="color:var(--down)">▼파랑</span> (국내 관례)
 </footer>
 
 <script>
 /* ════════════════════════════════════════════════
-   KAIEDU 업무 OS v1 — 단일 파일 대시보드
-   종목: 삼성전자(005930.KS) · 팔란티어(PLTR) · 알파벳C(GOOG)
-   날씨: 서울 양천구 목동 (Open-Meteo, 키 불필요)
-   테스트: 파일 뒤에 ?demo=1 붙이면 샘플 데이터로 렌더링
+   KAIEDU 업무 OS v3 — 단일 파일 대시보드
+   날씨·주식: 브라우저가 직접 호출 (공개 데이터)
+   메일·일정: 매일 아침 AI 비서가 선별·요약 → 암호화된
+     briefing.json 게시 → 전용 링크(#k=열쇠)로만 복호화 표시
+   테스트: ?demo=1
    ════════════════════════════════════════════════ */
 
 const DEMO = new URLSearchParams(location.search).has('demo');
@@ -186,9 +210,9 @@ function tick() {
 }
 tick(); setInterval(tick, 1000);
 
-/* ── 공통 fetch: 직접 → CORS 프록시 순서로 시도 ── */
+/* ── 공통 ── */
 const PROXIES = [
-  u => u,                                                              // 직접 (Open-Meteo는 CORS 허용)
+  u => u,
   u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
   u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
   u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
@@ -205,14 +229,14 @@ async function fetchJSON(url, { proxy = false } = {}) {
   }
   throw lastErr;
 }
-
 function setStatus(ok, msg) {
   document.getElementById('net-dot').className = 'dot' + (ok ? '' : ' err');
   document.getElementById('net-status').textContent = msg;
 }
 const fmtTime = d => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} 기준`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-/* ── 날씨 ── */
+/* ══════════════ 날씨 ══════════════ */
 const WMO = {
   0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],
   45:['안개','🌫️'],48:['짙은 안개','🌫️'],51:['이슬비','🌦️'],53:['이슬비','🌦️'],55:['이슬비','🌧️'],
@@ -223,8 +247,7 @@ const WMO = {
 };
 function renderWeather(d) {
   const [desc, icon] = WMO[d.current.weather_code] || ['—','🌡️'];
-  const el = document.getElementById('card-weather');
-  el.innerHTML = `
+  document.getElementById('card-weather').innerHTML = `
     <h2>목동 날씨 <span class="src">Open-Meteo · ${fmtTime(new Date())}</span></h2>
     <div class="weather-now">
       <div class="icon">${icon}</div>
@@ -259,7 +282,7 @@ async function loadWeather() {
   }
 }
 
-/* ── 주식 ── */
+/* ══════════════ 주식 ══════════════ */
 function fmtPrice(v, cur) {
   if (cur === 'KRW') return Math.round(v).toLocaleString('ko-KR') + '원';
   return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -311,7 +334,7 @@ async function loadStock(card) {
   }
   const u = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=5d`;
   try {
-    const j = await fetchJSON(u, { proxy: true });   // Yahoo는 CORS 미허용 → 프록시 우선
+    const j = await fetchJSON(u, { proxy: true });
     const r = j.chart.result[0];
     const meta = r.meta;
     const closes = (r.indicators.quote[0].close || []).filter(v => v != null);
@@ -331,11 +354,107 @@ async function loadStock(card) {
   }
 }
 
-/* ── 전체 로드 & 주기 갱신 ── */
+/* ══════════════ 브리핑 (메일·일정) — 암호화 파일 복호화 ══════════════ */
+function getBriefKey() {
+  const m = /[#&]k=([A-Za-z0-9_-]+)/.exec(location.hash);
+  return m ? m[1] : null;
+}
+async function decryptBrief(obj, keyB64u) {
+  const b64uToBytes = s => Uint8Array.from(
+    atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4)),
+    c => c.charCodeAt(0));
+  const b64ToBytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey('raw', b64uToBytes(keyB64u), 'AES-GCM', false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(obj.iv) }, key, b64ToBytes(obj.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+function briefStamp(iso) {
+  const d = new Date(iso);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} 생성`;
+}
+function renderCalendar(cal, stamp) {
+  const el = document.getElementById('card-calendar');
+  const items = (cal && cal.length)
+    ? `<ul class="cal-list">` + cal.map(ev => `
+        <li class="cal-item">
+          <span class="cal-time">${esc(ev.time)}</span>
+          <span class="cal-title">${esc(ev.title)}
+            ${ev.location ? `<span class="cal-loc">📍 ${esc(ev.location)}</span>` : ''}</span>
+        </li>`).join('') + `</ul>`
+    : `<div class="placeholder">오늘 등록된 일정이 없습니다. 🎉</div>`;
+  el.innerHTML = `<h2>오늘의 일정 <span class="src">Google Calendar · ${stamp}</span></h2>${items}`;
+}
+function renderMail(mails, stamp, showAll) {
+  const el = document.getElementById('card-mail');
+  const shown = showAll ? mails : mails.slice(0, 5);
+  const body = (!mails || mails.length === 0)
+    ? `<div class="placeholder">최근 24시간 안에 회신이 필요해 보이는 메일이 없습니다. 👍</div>`
+    : `<ul class="mail-list">` + shown.map(m => `
+        <li class="mail-item">
+          <a class="mail-subject" href="${esc(m.link || '#')}" target="_blank" rel="noopener">
+            ${m.badge ? '<span class="badge">회신 필요</span>' : ''}${esc(m.subject)}</a>
+          <span class="mail-from">${esc(m.from)}${m.time ? ' · ' + esc(m.time) : ''}</span>
+          <span class="mail-snippet">${esc(m.summary)}</span>
+        </li>`).join('') + `</ul>`
+      + (!showAll && mails.length > 5
+        ? `<button class="pill mail-more" id="btn-mail-more">더 보기 (${mails.length}개 중 5개 표시)</button>` : '');
+  el.innerHTML = `<h2>회신이 필요한 메일 <span class="src">Gmail · AI 선별 · ${stamp}</span></h2>${body}`;
+  document.getElementById('btn-mail-more')?.addEventListener('click', () => renderMail(mails, stamp, true));
+}
+function briefLocked(el, what) {
+  el.innerHTML = el.querySelector('h2').outerHTML +
+    `<div class="placeholder"><span class="big">🔒 전용 링크로만 표시됩니다</span>
+     ${what}은(는) 암호화되어 있어, 열쇠가 포함된<br>전용 북마크 링크로 열어야 보입니다.</div>`;
+}
+const DEMO_BRIEF = {
+  generatedAt: new Date().toISOString(),
+  calendar: [
+    { time: '10:00–12:00', title: '달공학당2' },
+    { time: '13:30–15:00', title: '정엘특강' },
+    { time: '20:30–23:30', title: '헤르메스2강' },
+  ],
+  emails: [
+    { subject: '[검토요청] 8월 특강 커리큘럼 초안', from: '김민지', time: '09:12', badge: true, link: '#',
+      summary: '다음 주 화요일 특강 커리큘럼 초안 검토 요청. 수강 인원 확정됨 — 회신 즉시 진행 예정.' },
+    { subject: '교육장 대관 견적서 송부의 건', from: '박성호', time: '08:47', badge: true, link: '#',
+      summary: '견적서 첨부. 금주 내 승인 여부 회신 요청.' },
+    { subject: 'AI 교육 관련 인터뷰 요청', from: '이수연 기자', time: '07:58', badge: true, link: '#',
+      summary: '인터뷰 일정 조율 — 가능한 시간대 2~3개 회신 필요.' },
+  ],
+};
+async function loadBrief() {
+  const calEl = document.getElementById('card-calendar');
+  const mailEl = document.getElementById('card-mail');
+  if (DEMO) {
+    const b = DEMO_BRIEF, stamp = briefStamp(b.generatedAt);
+    renderCalendar(b.calendar, stamp); renderMail(b.emails, stamp, false);
+    return;
+  }
+  const key = getBriefKey();
+  if (!key) { briefLocked(calEl, '오늘 일정'); briefLocked(mailEl, '메일 브리핑'); return; }
+  try {
+    const res = await fetch('briefing.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const enc = await res.json();
+    const b = await decryptBrief(enc, key);
+    const stamp = briefStamp(b.generatedAt);
+    renderCalendar(b.calendar, stamp);
+    renderMail(b.emails, stamp, false);
+  } catch (e) {
+    const msg = e.name === 'OperationError'
+      ? '열쇠가 맞지 않습니다. 북마크 링크를 다시 확인해 주세요.'
+      : '아직 오늘 브리핑이 게시되지 않았습니다. (매일 아침 7시 자동 게시)';
+    calEl.innerHTML = calEl.querySelector('h2').outerHTML + `<div class="placeholder">${msg}</div>`;
+    mailEl.innerHTML = mailEl.querySelector('h2').outerHTML + `<div class="placeholder">${msg}</div>`;
+  }
+}
+
+/* ══════════════ 전체 로드 & 주기 갱신 ══════════════ */
 async function loadAll() {
   setStatus(true, '데이터 불러오는 중…');
   const stockCards = [...document.querySelectorAll('.card.stock')];
   const results = await Promise.all([loadWeather(), ...stockCards.map(loadStock)]);
+  loadBrief();
   const failed = results.slice(1).filter(r => r === false).length;
   if (DEMO) setStatus(true, '데모 모드 (샘플 데이터)');
   else if (failed === 0) setStatus(true, `실시간 연결됨 · ${fmtTime(new Date())}`);
@@ -343,7 +462,7 @@ async function loadAll() {
 }
 document.getElementById('btn-refresh').addEventListener('click', loadAll);
 loadAll();
-setInterval(loadAll, 5 * 60 * 1000);      // 시세·날씨 5분마다 갱신
+setInterval(loadAll, 5 * 60 * 1000);
 </script>
 </body>
 </html>
