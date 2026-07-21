@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAIEDU 업무 OS</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --border: #e6e8ec;
+    --ink: #1a1d21;
+    --ink-2: #5b6069;
+    --ink-3: #9096a0;
+    --up: #d13c46;      /* 상승 (한국 관례: 빨강) */
+    --down: #2a6bd4;    /* 하락 (한국 관례: 파랑) */
+    --accent: #1a1d21;
+    --chip: #f1f2f4;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px clamp(16px, 4vw, 48px) 48px;
+  }
+  a { color: inherit; }
+
+  /* ── 헤더 ── */
+  header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 6px;
+  }
+  .brand { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+  .brand small { font-weight: 500; color: var(--ink-3); font-size: 13px; margin-left: 8px; }
+  .clock { font-variant-numeric: tabular-nums; text-align: right; }
+  .clock .date { font-size: 14px; color: var(--ink-2); }
+  .clock .time { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .statusline {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-size: 12.5px; color: var(--ink-3); margin: 4px 0 22px;
+  }
+  .statusline .dot { width: 7px; height: 7px; border-radius: 50%; background: #35b26a; display: inline-block; }
+  .statusline .dot.err { background: #d13c46; }
+  button.refresh {
+    border: 1px solid var(--border); background: var(--card); color: var(--ink-2);
+    font: inherit; font-size: 12.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  }
+  button.refresh:hover { border-color: var(--ink-3); color: var(--ink); }
+
+  /* ── 그리드 ── */
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: stretch;
+  }
+  section.card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 22px;
+    display: flex; flex-direction: column; min-height: 168px;
+  }
+  .card h2 {
+    font-size: 13px; font-weight: 700; color: var(--ink-2);
+    letter-spacing: 0.02em; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card h2 .src { font-weight: 500; font-size: 11.5px; color: var(--ink-3); }
+
+  /* ── 날씨 카드 ── */
+  .weather-now { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+  .weather-now .icon { font-size: 44px; line-height: 1; }
+  .weather-now .temp { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; }
+  .weather-now .desc { font-size: 14px; color: var(--ink-2); }
+  .weather-days { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+  .wday {
+    background: var(--chip); border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; display: flex; flex-direction: column; gap: 3px;
+  }
+  .wday .label { color: var(--ink-3); font-size: 12px; }
+  .wday .range { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .wday .rain { color: var(--down); font-size: 12.5px; }
+
+  /* ── 주식 카드 ── */
+  .stock-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .stock-name { font-size: 16px; font-weight: 700; }
+  .stock-sym { font-size: 11.5px; color: var(--ink-3); font-weight: 500; margin-left: 6px; }
+  .stock-price {
+    font-size: 34px; font-weight: 800; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums; margin: 8px 0 2px;
+  }
+  .stock-change { font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stock-change.up   { color: var(--up); }
+  .stock-change.down { color: var(--down); }
+  .stock-change.flat { color: var(--ink-3); }
+  .stock-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
+  .spark { margin-top: auto; padding-top: 12px; }
+  .spark svg { width: 100%; height: 44px; display: block; }
+  .spark .cap { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+  /* ── 캘린더 자리 ── */
+  .placeholder {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    color: var(--ink-3); font-size: 13.5px; margin: auto 0;
+  }
+  .placeholder .big { font-size: 15px; color: var(--ink-2); font-weight: 600; }
+
+  .loading { color: var(--ink-3); font-size: 13.5px; margin: auto 0; }
+  .errmsg { color: var(--up); font-size: 13px; margin: auto 0; line-height: 1.5; }
+
+  footer { margin-top: 26px; font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">KAIEDU 업무 OS <small>Daily Briefing</small></div>
+  <div class="clock">
+    <div class="date" id="today-date">—</div>
+    <div class="time" id="today-time">--:--:--</div>
+  </div>
+</header>
+<div class="statusline">
+  <span class="dot" id="net-dot"></span>
+  <span id="net-status">데이터 불러오는 중…</span>
+  <button class="refresh" id="btn-refresh">새로고침</button>
+</div>
+
+<div class="grid">
+
+  <!-- 날씨 -->
+  <section class="card" id="card-weather">
+    <h2>목동 날씨 <span class="src">Open-Meteo</span></h2>
+    <div class="loading">불러오는 중…</div>
+  </section>
+
+  <!-- 주식 3종목: JS가 채움 -->
+  <section class="card stock" data-symbol="005930.KS"></section>
+  <section class="card stock" data-symbol="PLTR"></section>
+  <section class="card stock" data-symbol="GOOG"></section>
+
+  <!-- 캘린더 (연동 예정) -->
+  <section class="card">
+    <h2>오늘의 일정 <span class="src">Google Calendar</span></h2>
+    <div class="placeholder">
+      <span class="big">🗓️ 연동 예정</span>
+      <span>다음 단계에서 Google Calendar API(OAuth)를 붙이면<br>이 자리에 오늘 일정이 자동으로 표시됩니다.</span>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  주가·환율은 15~20분 지연될 수 있으며 투자 판단의 근거가 아닌 참고용입니다.
+  · 시세: Yahoo Finance · 날씨: Open-Meteo · 상승 <span style="color:var(--up)">▲빨강</span> / 하락 <span style="color:var(--down)">▼파랑</span> (국내 관례)
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════
+   KAIEDU 업무 OS v1 — 단일 파일 대시보드
+   종목: 삼성전자(005930.KS) · 팔란티어(PLTR) · 알파벳C(GOOG)
+   날씨: 서울 양천구 목동 (Open-Meteo, 키 불필요)
+   테스트: 파일 뒤에 ?demo=1 붙이면 샘플 데이터로 렌더링
+   ════════════════════════════════════════════════ */
+
+const DEMO = new URLSearchParams(location.search).has('demo');
+
+const STOCKS = {
+  '005930.KS': { name: '삼성전자',  cur: 'KRW', market: 'KOSPI'  },
+  'PLTR':      { name: '팔란티어',  cur: 'USD', market: 'NASDAQ' },
+  'GOOG':      { name: '알파벳 C', cur: 'USD', market: 'NASDAQ' },
+};
+const MOKDONG = { lat: 37.5265, lon: 126.8746 };
+
+/* ── 시계 ── */
+const DAYS = ['일','월','화','수','목','금','토'];
+function tick() {
+  const n = new Date();
+  document.getElementById('today-date').textContent =
+    `${n.getFullYear()}년 ${n.getMonth()+1}월 ${n.getDate()}일 (${DAYS[n.getDay()]})`;
+  document.getElementById('today-time').textContent =
+    [n.getHours(), n.getMinutes(), n.getSeconds()].map(v => String(v).padStart(2,'0')).join(':');
+}
+tick(); setInterval(tick, 1000);
+
+/* ── 공통 fetch: 직접 → CORS 프록시 순서로 시도 ── */
+const PROXIES = [
+  u => u,                                                              // 직접 (Open-Meteo는 CORS 허용)
+  u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+];
+async function fetchJSON(url, { proxy = false } = {}) {
+  const attempts = proxy ? PROXIES.slice(1).concat(PROXIES[0]) : PROXIES;
+  let lastErr;
+  for (const wrap of attempts) {
+    try {
+      const res = await fetch(wrap(url), { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr;
+}
+
+function setStatus(ok, msg) {
+  document.getElementById('net-dot').className = 'dot' + (ok ? '' : ' err');
+  document.getElementById('net-status').textContent = msg;
+}
+const fmtTime = d => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} 기준`;
+
+/* ── 날씨 ── */
+const WMO = {
+  0:['맑음','☀️'],1:['대체로 맑음','🌤️'],2:['구름 조금','⛅'],3:['흐림','☁️'],
+  45:['안개','🌫️'],48:['짙은 안개','🌫️'],51:['이슬비','🌦️'],53:['이슬비','🌦️'],55:['이슬비','🌧️'],
+  61:['약한 비','🌧️'],63:['비','🌧️'],65:['강한 비','🌧️'],66:['어는 비','🌧️'],67:['어는 비','🌧️'],
+  71:['약한 눈','🌨️'],73:['눈','🌨️'],75:['폭설','❄️'],77:['싸락눈','🌨️'],
+  80:['소나기','🌦️'],81:['소나기','🌧️'],82:['강한 소나기','⛈️'],
+  85:['소낙눈','🌨️'],86:['소낙눈','❄️'],95:['뇌우','⛈️'],96:['뇌우·우박','⛈️'],99:['뇌우·우박','⛈️'],
+};
+function renderWeather(d) {
+  const [desc, icon] = WMO[d.current.weather_code] || ['—','🌡️'];
+  const el = document.getElementById('card-weather');
+  el.innerHTML = `
+    <h2>목동 날씨 <span class="src">Open-Meteo · ${fmtTime(new Date())}</span></h2>
+    <div class="weather-now">
+      <div class="icon">${icon}</div>
+      <div>
+        <div class="temp">${Math.round(d.current.temperature_2m)}°</div>
+        <div class="desc">${desc} · 습도 ${d.current.relative_humidity_2m}%</div>
+      </div>
+    </div>
+    <div class="weather-days">
+      <div class="wday"><span class="label">오늘</span>
+        <span class="range">${Math.round(d.daily.temperature_2m_min[0])}° ~ ${Math.round(d.daily.temperature_2m_max[0])}°</span>
+        <span class="rain">강수확률 ${d.daily.precipitation_probability_max[0]}%</span></div>
+      <div class="wday"><span class="label">내일</span>
+        <span class="range">${Math.round(d.daily.temperature_2m_min[1])}° ~ ${Math.round(d.daily.temperature_2m_max[1])}°</span>
+        <span class="rain">강수확률 ${d.daily.precipitation_probability_max[1]}%</span></div>
+    </div>`;
+}
+async function loadWeather() {
+  if (DEMO) return renderWeather({
+    current: { temperature_2m: 26.4, weather_code: 80, relative_humidity_2m: 78 },
+    daily: { temperature_2m_min: [24,24], temperature_2m_max: [26,29], precipitation_probability_max: [100,78] },
+  });
+  const u = `https://api.open-meteo.com/v1/forecast?latitude=${MOKDONG.lat}&longitude=${MOKDONG.lon}`
+    + `&current=temperature_2m,weather_code,relative_humidity_2m`
+    + `&daily=temperature_2m_min,temperature_2m_max,precipitation_probability_max`
+    + `&timezone=Asia%2FSeoul&forecast_days=2`;
+  try { renderWeather(await fetchJSON(u)); }
+  catch (e) {
+    document.getElementById('card-weather').innerHTML =
+      `<h2>목동 날씨 <span class="src">Open-Meteo</span></h2>
+       <div class="errmsg">날씨를 불러오지 못했습니다.<br>네트워크 연결을 확인한 뒤 새로고침해 주세요.</div>`;
+  }
+}
+
+/* ── 주식 ── */
+function fmtPrice(v, cur) {
+  if (cur === 'KRW') return Math.round(v).toLocaleString('ko-KR') + '원';
+  return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function sparkline(closes) {
+  const w = 260, h = 44, pad = 3;
+  const vals = closes.filter(v => v != null);
+  if (vals.length < 2) return '';
+  const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+  const pts = vals.map((v, i) => {
+    const x = pad + (w - 2*pad) * i / (vals.length - 1);
+    const y = pad + (h - 2*pad) * (1 - (v - min) / span);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const color = vals[vals.length-1] >= vals[0] ? 'var(--up)' : 'var(--down)';
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function renderStock(card, sym, price, prevClose, closes) {
+  const info = STOCKS[sym];
+  const diff = price - prevClose;
+  const pct = prevClose ? (diff / prevClose * 100) : 0;
+  const dir = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
+  const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '—';
+  const diffTxt = info.cur === 'KRW'
+    ? Math.abs(Math.round(diff)).toLocaleString('ko-KR')
+    : Math.abs(diff).toFixed(2);
+  card.innerHTML = `
+    <h2>주식 시세 <span class="src">${info.market} · Yahoo Finance</span></h2>
+    <div class="stock-head">
+      <div><span class="stock-name">${info.name}</span><span class="stock-sym">${sym}</span></div>
+    </div>
+    <div class="stock-price">${fmtPrice(price, info.cur)}</div>
+    <div class="stock-change ${dir}">${arrow} ${diffTxt} (${diff >= 0 ? '+' : '-'}${Math.abs(pct).toFixed(2)}%)</div>
+    <div class="stock-meta">전일 종가 ${fmtPrice(prevClose, info.cur)} · ${fmtTime(new Date())}</div>
+    <div class="spark">${sparkline(closes)}<div class="cap">최근 5거래일</div></div>`;
+}
+const DEMO_STOCKS = {
+  '005930.KS': { price: 262750, prev: 244000, closes: [241000, 246500, 243000, 244000, 262750] },
+  'PLTR':      { price: 158.32, prev: 151.10, closes: [149.8, 152.4, 150.2, 151.1, 158.32] },
+  'GOOG':      { price: 201.44, prev: 204.03, closes: [206.9, 205.1, 207.3, 204.0, 201.44] },
+};
+async function loadStock(card) {
+  const sym = card.dataset.symbol;
+  if (DEMO) {
+    const d = DEMO_STOCKS[sym];
+    return renderStock(card, sym, d.price, d.prev, d.closes);
+  }
+  const u = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=5d`;
+  try {
+    const j = await fetchJSON(u, { proxy: true });   // Yahoo는 CORS 미허용 → 프록시 우선
+    const r = j.chart.result[0];
+    const meta = r.meta;
+    const closes = (r.indicators.quote[0].close || []).filter(v => v != null);
+    const price = meta.regularMarketPrice ?? closes[closes.length - 1];
+    const prev = meta.chartPreviousClose && closes.length < 2
+      ? meta.chartPreviousClose
+      : (closes.length >= 2 ? closes[closes.length - 2] : meta.chartPreviousClose);
+    renderStock(card, sym, price, prev, closes);
+    return true;
+  } catch (e) {
+    const info = STOCKS[sym];
+    card.innerHTML = `
+      <h2>주식 시세 <span class="src">${info.market} · Yahoo Finance</span></h2>
+      <div class="stock-head"><div><span class="stock-name">${info.name}</span><span class="stock-sym">${sym}</span></div></div>
+      <div class="errmsg">시세를 불러오지 못했습니다.<br>잠시 후 자동으로 다시 시도합니다.</div>`;
+    return false;
+  }
+}
+
+/* ── 전체 로드 & 주기 갱신 ── */
+async function loadAll() {
+  setStatus(true, '데이터 불러오는 중…');
+  const stockCards = [...document.querySelectorAll('.card.stock')];
+  const results = await Promise.all([loadWeather(), ...stockCards.map(loadStock)]);
+  const failed = results.slice(1).filter(r => r === false).length;
+  if (DEMO) setStatus(true, '데모 모드 (샘플 데이터)');
+  else if (failed === 0) setStatus(true, `실시간 연결됨 · ${fmtTime(new Date())}`);
+  else setStatus(false, `일부 시세 로딩 실패 (${failed}건) · 5분 후 재시도`);
+}
+document.getElementById('btn-refresh').addEventListener('click', loadAll);
+loadAll();
+setInterval(loadAll, 5 * 60 * 1000);      // 시세·날씨 5분마다 갱신
+</script>
+</body>
+</html>
